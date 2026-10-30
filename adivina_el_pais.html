@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101a3a">
+<title>Adivina el País — Desafío geográfico</title>
+<style>
+:root{--bg:#0b1024;--panel:#151d3d;--panel2:#1d2850;--ink:#f4f7ff;--muted:#b8c3e8;--cyan:#55e6d0;--gold:#ffd166;--pink:#ff719a;--line:#35416e}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#26376e 0,#101831 45%,#090e20 100%);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);min-height:100vh}
+.wrap{max-width:1100px;margin:auto;padding:22px 16px 44px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px}.brand{display:flex;align-items:center;gap:12px}.logo{display:grid;place-items:center;width:50px;height:50px;border-radius:16px;background:linear-gradient(135deg,var(--cyan),#6ba7ff);font-size:27px;box-shadow:0 8px 24px #55e6d044}.brand h1{font-size:clamp(1.3rem,4vw,2rem);margin:0;letter-spacing:-.04em}.brand p{margin:3px 0 0;color:var(--muted);font-size:.9rem}.pill{border:1px solid var(--line);background:#121a36;border-radius:999px;padding:9px 13px;color:var(--muted);font-size:.85rem;white-space:nowrap}
+.hero{background:linear-gradient(135deg,#202e5cdd,#172144ee);border:1px solid #405080;border-radius:25px;padding:clamp(20px,4vw,34px);box-shadow:0 20px 60px #0003;margin-bottom:18px}.eyebrow{color:var(--cyan);font-weight:800;text-transform:uppercase;letter-spacing:.13em;font-size:.76rem}.hero h2{font-size:clamp(1.8rem,5vw,3rem);line-height:1.05;margin:10px 0}.hero p{color:var(--muted);max-width:720px;line-height:1.6;margin:0}
+.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(260px,.85fr);gap:18px}.card{background:#131c38ed;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 12px 35px #0002}.card h3{margin:0 0 14px;font-size:1.1rem}.settings{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field label{display:block;font-size:.84rem;color:var(--muted);margin-bottom:7px}.field select,.field input{width:100%;padding:12px 13px;background:#0e1630;color:var(--ink);border:1px solid #3a4777;border-radius:12px;font:inherit;outline:none}.field select:focus,.field input:focus{border-color:var(--cyan)}.span2{grid-column:1/-1}
+button{font:inherit;cursor:pointer;border:0;transition:transform .15s,filter .15s}button:hover{filter:brightness(1.08);transform:translateY(-1px)}button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}.primary{width:100%;margin-top:16px;padding:14px 18px;border-radius:14px;background:linear-gradient(135deg,var(--cyan),#72b7ff);color:#08152b;font-weight:900;font-size:1rem}.secondary{padding:11px 14px;border-radius:12px;background:#26345f;border:1px solid #405080;color:var(--ink);font-weight:700}.hint{color:var(--gold)}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stat{padding:14px;background:#0e1630;border:1px solid #2c3966;border-radius:15px}.stat strong{display:block;font-size:1.55rem}.stat span{color:var(--muted);font-size:.82rem}.records{padding-left:20px;color:var(--muted);line-height:1.8}.records b{color:var(--ink)}.reward{margin-top:15px;padding:14px;border-radius:15px;background:linear-gradient(135deg,#4a3b1b66,#292342);border:1px solid #74602d;color:#ffe6a3;line-height:1.45}
+.game{display:none}.game.active{display:block}.gamebar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:15px}.progress{height:9px;background:#0a1229;border-radius:99px;overflow:hidden;flex:1;min-width:130px}.progress div{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),#7db5ff);transition:width .25s}.questionbox{background:linear-gradient(135deg,#1d2b55,#15203f);border:1px solid #3b4c7d;border-radius:22px;padding:clamp(20px,4vw,30px)}.qmeta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:15px}.tag{font-size:.78rem;padding:6px 10px;border-radius:999px;background:#27365f;color:#dbe6ff}.tag.timer{background:#4a263c;color:#ffd2de}.questionbox h2{font-size:clamp(1.4rem,4vw,2.2rem);line-height:1.2;margin:0 0 12px}.clue{font-size:1.04rem;color:#d6def8;line-height:1.65;margin:0 0 20px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:10px}.answer{padding:14px;text-align:left;background:#111a36;border:1px solid #3b4b7b;border-radius:14px;color:var(--ink);font-weight:750;min-height:54px}.answer .letter{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:#293760;color:var(--cyan);margin-right:8px;font-size:.82rem}.answer.selected{border-color:var(--cyan);background:#183a4a}.answer.correct{border-color:#51dfaa;background:#143c38}.answer.wrong{border-color:var(--pink);background:#49263a}.answer:disabled{cursor:default;transform:none}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}.actions button{flex:1}.feedback{min-height:27px;margin-top:14px;color:var(--muted);line-height:1.5}.feedback.good{color:#7ff0c3}.feedback.bad{color:#ff9cb6}.timerbar{height:7px;background:#0a1229;border-radius:99px;margin:12px 0 0;overflow:hidden}.timerbar div{height:100%;background:var(--gold);width:100%}.hidden{display:none!important}.result{text-align:center;padding:24px 10px}.medal{font-size:4rem}.result h2{font-size:2rem;margin:5px}.result p{color:var(--muted);line-height:1.6}.result .bigscore{font-size:3rem;color:var(--gold);font-weight:950}.footer{text-align:center;color:#8896c3;font-size:.8rem;margin-top:22px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#f7d77a;color:#1a1b24;padding:12px 18px;border-radius:13px;font-weight:850;box-shadow:0 8px 35px #0006;z-index:10;display:none;max-width:90%;text-align:center}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.top{align-items:flex-start}.pill{font-size:.75rem}.settings{grid-template-columns:1fr}.span2{grid-column:auto}.answers{grid-template-columns:1fr}.card{padding:18px}.hero{border-radius:20px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top"><div class="brand"><div class="logo">🌍</div><div><h1>Adivina el País</h1><p>Desafío geográfico · aprendé jugando</p></div></div><div class="pill">🎯 Modo educativo</div></header>
+<section class="hero"><div class="eyebrow">Explorá el mundo</div><h2>¿Cuánto sabés de geografía?</h2><p>Descubrí países con pistas, sumá puntos, desbloqueá premios y superá tus propios récords. ¡Invitá a alguien para jugar un duelo!</p></section>
+<div id="setup" class="grid">
+<section class="card"><h3>⚙️ Prepará tu partida</h3><div class="settings">
+<div class="field"><label for="difficulty">Dificultad</label><select id="difficulty"><option value="easy">Fácil · sin reloj</option><option value="medium">Media · 20 segundos</option><option value="hard">Difícil · 10 segundos</option></select></div>
+<div class="field"><label for="mode">Modo de juego</label><select id="mode"><option value="solo">Individual</option><option value="duel">Duelo de 2 jugadores</option></select></div>
+<div class="field"><label for="rounds">Preguntas por partida</label><select id="rounds"><option>10</option><option>15</option><option>20</option><option>30</option></select></div>
+<div class="field"><label for="category">Tema</label><select id="category"><option value="all">Todos los países</option><option value="america">América</option><option value="europe">Europa</option><option value="asia">Asia</option><option value="africa">África</option><option value="oceania">Oceanía</option></select></div>
+<div class="field span2"><label for="p1">Nombre del jugador 1</label><input id="p1" maxlength="18" placeholder="Ej.: Alex" value="Jugador 1"></div>
+<div class="field span2 hidden" id="p2wrap"><label for="p2">Nombre del jugador 2</label><input id="p2" maxlength="18" placeholder="Ej.: Sam" value="Jugador 2"></div>
+</div><button class="primary" id="start">¡Empezar a jugar! →</button></section>
+<aside class="card"><h3>🏆 Tus estadísticas</h3><div class="stats"><div class="stat"><strong id="bestScore">0</strong><span>Mejor puntaje</span></div><div class="stat"><strong id="bestCorrect">0</strong><span>Récord de aciertos</span></div></div><h3 style="margin-top:20px">🥇 Récords guardados</h3><ol class="records" id="recordList"><li>Todavía no hay récords.</li></ol><div class="reward"><b>🎁 Premios desbloqueables</b><br>100 puntos: Explorador/a 🧭<br>250 puntos: Viajero/a experto/a ✈️<br>500 puntos: Leyenda mundial 🌎</div><button class="secondary" style="width:100%;margin-top:12px" id="clearRecords">Borrar récords</button></aside>
+</div>
+<section id="game" class="game card">
+<div class="gamebar"><span class="tag" id="roundTag">Pregunta 1</span><span class="tag" id="playerTag">Jugador 1</span><span class="tag" id="scoreTag">⭐ 0 puntos</span><div class="progress"><div id="progressFill"></div></div></div>
+<div class="questionbox" id="questionbox"><div class="qmeta"><span class="tag" id="diffTag">Fácil</span><span class="tag" id="continentTag">América</span><span class="tag timer hidden" id="timeTag">⏱ 20 s</span></div><h2 id="qtitle">¿Qué país soy?</h2><p class="clue" id="clue"></p><div class="answers" id="answers"></div><div class="timerbar hidden" id="timerbar"><div id="timerfill"></div></div><div class="feedback" id="feedback" aria-live="polite"></div><div class="actions"><button class="secondary hint" id="hintBtn">💡 Pedir una pista (−5 puntos)</button><button class="primary" id="submitBtn" style="margin:0">Enviar respuesta</button><button class="secondary hidden" id="nextBtn">Siguiente →</button></div></div>
+<div id="result" class="result hidden"><div class="medal" id="resultMedal">🏆</div><h2 id="resultTitle">¡Partida terminada!</h2><div class="bigscore" id="finalScore">0</div><p id="resultText"></p><div id="winnerText"></div><button class="primary" id="againBtn">Jugar otra vez</button><button class="secondary" id="homeBtn" style="margin-top:10px;width:100%">Volver al menú</button></div>
+</section>
+<div class="footer">Hecho para aprender, jugar y descubrir el mundo. Los récords se guardan en este dispositivo.</div>
+</div><div id="toast" class="toast"></div>
+<script>
+const countries=[
+{n:"Argentina",c:"america",cl:"Está en América del Sur. Su capital es Buenos Aires y su bandera tiene celeste y blanco.",h:"Es el país donde se encuentra la Patagonia.",d:"easy"},
+{n:"Brasil",c:"america",cl:"Es el país más grande de América del Sur y allí se habla portugués.",h:"El Amazonas atraviesa parte de su territorio.",d:"easy"},
+{n:"Chile",c:"america",cl:"Es un país largo y angosto de América del Sur, entre la cordillera de los Andes y el océano Pacífico.",h:"Su territorio incluye el desierto de Atacama.",d:"easy"},
+{n:"México",c:"america",cl:"Está en América del Norte y su capital tiene el mismo nombre que el país.",h:"Son muy conocidos sus tacos y el Día de Muertos.",d:"easy"},
+{n:"Canadá",c:"america",cl:"Es el segundo país más extenso del mundo y su bandera tiene una hoja de arce.",h:"Su capital es Ottawa.",d:"easy"},
+{n:"Perú",c:"america",cl:"En este país se encuentra Machu Picchu, antigua ciudad inca.",h:"Su capital es Lima.",d:"easy"},
+{n:"Colombia",c:"america",cl:"Está al norte de América del Sur y tiene costas en el Caribe y el Pacífico.",h:"Es famosa por su producción de café.",d:"medium"},
+{n:"Uruguay",c:"america",cl:"Es vecino de Argentina y Brasil, y su capital es Montevideo.",h:"Su nombre comienza con U.",d:"easy"},
+{n:"Bolivia",c:"america",cl:"País sudamericano sin salida al mar; allí se encuentra el salar de Uyuni.",h:"Sucre es su capital constitucional.",d:"medium"},
+{n:"Ecuador",c:"america",cl:"Su nombre está relacionado con la línea imaginaria que divide la Tierra en hemisferios.",h:"Las islas Galápagos pertenecen a este país.",d:"medium"},
+{n:"Estados Unidos",c:"america",cl:"Está formado por 50 estados y su capital es Washington D. C.",h:"Su bandera tiene estrellas y franjas.",d:"easy"},
+{n:"Cuba",c:"america",cl:"Es una isla del mar Caribe cuya capital es La Habana.",h:"Su bandera tiene una estrella blanca en un triángulo rojo.",d:"medium"},
+{n:"Francia",c:"europe",cl:"Su capital es París y en su territorio está la Torre Eiffel.",h:"Su bandera tiene azul, blanco y rojo en franjas verticales.",d:"easy"},
+{n:"España",c:"europe",cl:"Está en la península ibérica y su capital es Madrid.",h:"En este país se habla español como lengua oficial nacional.",d:"easy"},
+{n:"Italia",c:"europe",cl:"Su forma en el mapa recuerda a una bota.",h:"Roma es su capital.",d:"easy"},
+{n:"Alemania",c:"europe",cl:"Está en Europa central y su bandera tiene negro, rojo y amarillo.",h:"Berlín es su capital.",d:"medium"},
+{n:"Portugal",c:"europe",cl:"Está al oeste de España, junto al océano Atlántico.",h:"Su capital es Lisboa.",d:"medium"},
+{n:"Grecia",c:"europe",cl:"Es conocida por su historia antigua, sus islas y sus mitos.",h:"Atenas es su capital.",d:"medium"},
+{n:"Noruega",c:"europe",cl:"País nórdico famoso por sus fiordos y paisajes montañosos.",h:"Su capital es Oslo.",d:"hard"},
+{n:"Islandia",c:"europe",cl:"Es una isla del Atlántico norte con volcanes, glaciares y géiseres.",h:"Su capital es Reikiavik.",d:"hard"},
+{n:"Egipto",c:"africa",cl:"En este país se encuentran las pirámides de Guiza y el río Nilo.",h:"Su capital es El Cairo.",d:"easy"},
+{n:"Marruecos",c:"africa",cl:"Está en el noroeste de África, cerca de España, separado por un estrecho.",h:"Marrakech es una de sus ciudades conocidas.",d:"medium"},
+{n:"Kenia",c:"africa",cl:"País de África oriental conocido por sus reservas naturales y safaris.",h:"Su capital es Nairobi.",d:"hard"},
+{n:"Sudáfrica",c:"africa",cl:"Está en el extremo sur del continente africano y tiene tres capitales oficiales.",h:"Ciudad del Cabo es una de ellas.",d:"hard"},
+{n:"Nigeria",c:"africa",cl:"Es uno de los países más poblados de África y está en la zona occidental.",h:"Su capital es Abuya.",d:"hard"},
+{n:"China",c:"asia",cl:"Es uno de los países más poblados del mundo y allí se encuentra parte de la Gran Muralla.",h:"Su capital es Pekín.",d:"easy"},
+{n:"Japón",c:"asia",cl:"Es un archipiélago de Asia oriental conocido por el monte Fuji.",h:"Tokio es su capital.",d:"easy"},
+{n:"India",c:"asia",cl:"En este país se encuentra el Taj Mahal y se hablan muchas lenguas.",h:"Su capital es Nueva Delhi.",d:"easy"},
+{n:"Corea del Sur",c:"asia",cl:"Está en la península coreana y su capital es Seúl.",h:"Es conocida por el K-pop y la tecnología.",d:"medium"},
+{n:"Tailandia",c:"asia",cl:"País del sudeste asiático cuya capital es Bangkok.",h:"Su antigua denominación en español era Siam.",d:"hard"},
+{n:"Arabia Saudita",c:"asia",cl:"Ocupa gran parte de la península arábiga.",h:"La Meca está en su territorio.",d:"hard"},
+{n:"Australia",c:"oceania",cl:"País y continente insular conocido por los canguros.",h:"Su capital es Canberra, no Sídney.",d:"easy"},
+{n:"Nueva Zelanda",c:"oceania",cl:"País formado principalmente por dos grandes islas del Pacífico.",h:"Sus habitantes son conocidos como kiwis.",d:"medium"},
+{n:"Fiyi",c:"oceania",cl:"Es un país insular del océano Pacífico, en Oceanía.",h:"Su capital es Suva.",d:"hard"},
+{n:"Kazajistán",c:"asia",cl:"Es un país muy extenso de Asia central, sin salida directa al océano.",h:"Su capital actual es Astaná.",d:"hard"},
+{n:"Suiza",c:"europe",cl:"País europeo conocido por los Alpes, los relojes y el chocolate.",h:"Su bandera es roja con una cruz blanca.",d:"medium"},
+{n:"Países Bajos",c:"europe",cl:"Parte importante de su territorio está a baja altura y tiene muchos canales.",h:"Ámsterdam es su capital.",d:"hard"},
+{n:"Senegal",c:"africa",cl:"País de África occidental cuya capital es Dakar.",h:"Su nombre empieza con S.",d:"hard"},
+{n:"Venezuela",c:"america",cl:"En este país se encuentra el Salto Ángel, una de las cascadas más altas del mundo.",h:"Su capital es Caracas.",d:"medium"},
+{n:"Paraguay",c:"america",cl:"País sudamericano sin litoral, donde se hablan español y guaraní.",h:"Su capital es Asunción.",d:"medium"}
+];
+const contNames={america:"América",europe:"Europa",asia:"Asia",africa:"África",oceania:"Oceanía"};
+const difficultyNames={easy:"Fácil",medium:"Media",hard:"Difícil"};
+const $=id=>document.getElementById(id);
+let questions=[],idx=0,selected="",locked=false,score=[0,0],correct=[0,0],players=["Jugador 1","Jugador 2"],turn=0,mode="solo",difficulty="easy",timer=null,timeLeft=0,started=false,hintsUsed=0,sessionBest=0;
+const recordsKey="adivinaPaisRecordsV2";
+function getRecords(){try{return JSON.parse(localStorage.getItem(recordsKey)||"[]")}catch(e){return []}}
+function saveRecords(r){localStorage.setItem(recordsKey,JSON.stringify(r))}
+function updateRecords(){const r=getRecords();$("bestScore").textContent=r.length?Math.max(...r.map(x=>x.score)):0;$("bestCorrect").textContent=r.length?Math.max(...r.map(x=>x.correct)):0;$("recordList").innerHTML=r.length?r.slice(0,5).map((x,i)=>`<li><b>${escapeHtml(x.name)}</b> — ${x.score} pts <small>(${x.correct} aciertos)</small></li>`).join(""):"<li>Todavía no hay récords.</li>"}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function toast(msg){$("toast").textContent=msg;$("toast").style.display="block";setTimeout(()=>$("toast").style.display="none",2400)}
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+$("mode").addEventListener("change",()=>{$("p2wrap").classList.toggle("hidden",$("mode").value!=="duel")});
+$("clearRecords").addEventListener("click",()=>{if(confirm("¿Querés borrar todos los récords guardados en este dispositivo?")){saveRecords([]);updateRecords();toast("Récords borrados.")}});
+$("start").addEventListener("click",startGame);
+function startGame(){
+difficulty=$("difficulty").value;mode=$("mode").value;players=[$("p1").value.trim()||"Jugador 1",$("p2").value.trim()||"Jugador 2"];if(mode==="solo")players[1]=players[0];
+let pool=countries.filter(q=>$("category").value==="all"||q.c===$("category").value);
+questions=shuffle(pool).slice(0,Math.min(+ $("rounds").value,pool.length));idx=0;score=[0,0];correct=[0,0];turn=0;hintsUsed=0;started=true;
+$("setup").classList.add("hidden");$("game").classList.add("active");$("questionbox").classList.remove("hidden");$("result").classList.add("hidden");showQuestion();
+}
+function pointsFor(){return difficulty==="easy"?10:difficulty==="medium"?20:30}
+function stopTimer(){if(timer){clearInterval(timer);timer=null}}
+function showQuestion(){
+stopTimer();locked=false;selected="";const q=questions[idx];if(!q){finishGame();return}
+$("roundTag").textContent=`Pregunta ${idx+1} de ${questions.length}`;$("playerTag").textContent=mode==="duel"?`Turno: ${players[turn]}`:players[0];$("scoreTag").textContent=mode==="duel"?`${players[0]}: ${score[0]} · ${players[1]}: ${score[1]}`:`⭐ ${score[0]} puntos`;$("progressFill").style.width=(idx/questions.length*100)+"%";
+$("diffTag").textContent=difficultyNames[difficulty];$("continentTag").textContent=contNames[q.c];$("qtitle").textContent="¿Qué país soy?";$("clue").textContent=q.cl;$("feedback").textContent="Elegí una respuesta y después tocá Enviar."; $("feedback").className="feedback";
+$("hintBtn").disabled=false;$("submitBtn").classList.remove("hidden");$("nextBtn").classList.add("hidden");
+let wrong=shuffle(countries.filter(x=>x.n!==q.n)).slice(0,3).map(x=>x.n);let opts=shuffle([q.n,...wrong]);$("answers").innerHTML=opts.map((a,i)=>`<button class="answer" data-answer="${escapeHtml(a)}"><span class="letter">${"ABCD"[i]}</span>${escapeHtml(a)}</button>`).join("");
+document.querySelectorAll(".answer").forEach(b=>b.addEventListener("click",()=>{if(locked)return;selected=b.dataset.answer;document.querySelectorAll(".answer").forEach(x=>x.classList.toggle("selected",x===b))}));
+const timed=difficulty!=="easy";$("timeTag").classList.toggle("hidden",!timed);$("timerbar").classList.toggle("hidden",!timed);
+if(timed){timeLeft=difficulty==="medium"?20:10;$("timeTag").textContent=`⏱ ${timeLeft} s`;$("timerfill").style.width="100%";timer=setInterval(()=>{timeLeft--;$("timeTag").textContent=`⏱ ${timeLeft} s`;$("timerfill").style.width=(timeLeft/(difficulty==="medium"?20:10)*100)+"%";if(timeLeft<=0){stopTimer();timeOut()}},1000)}
+}
+$("hintBtn").addEventListener("click",()=>{if(locked)return;const q=questions[idx];$("clue").textContent=q.cl+" Pista: "+q.h;score[turn]=Math.max(0,score[turn]-5);hintsUsed++;$("hintBtn").disabled=true;$("scoreTag").textContent=mode==="duel"?`${players[0]}: ${score[0]} · ${players[1]}: ${score[1]}`:`⭐ ${score[0]} puntos`;toast("Usaste una pista: −5 puntos")});
+$("submitBtn").addEventListener("click",()=>{if(locked)return;if(!selected){$("feedback").textContent="Primero elegí una respuesta.";return}checkAnswer(selected)});
+function timeOut(){if(locked)return;checkAnswer("")}
+function checkAnswer(answer){
+locked=true;stopTimer();const q=questions[idx],ok=answer===q.n;if(ok){score[turn]+=pointsFor();correct[turn]++;$("feedback").textContent=`¡Correcto! Era ${q.n}. +${pointsFor()} puntos.`;$("feedback").className="feedback good"}else{$("feedback").textContent=answer?`No era esa. La respuesta correcta es ${q.n}.`:`¡Se acabó el tiempo! Era ${q.n}.`;$("feedback").className="feedback bad"}
+document.querySelectorAll(".answer").forEach(b=>{b.disabled=true;if(b.dataset.answer===q.n)b.classList.add("correct");else if(b.dataset.answer===answer)b.classList.add("wrong")});
+$("scoreTag").textContent=mode==="duel"?`${players[0]}: ${score[0]} · ${players[1]}: ${score[1]}`:`⭐ ${score[0]} puntos`;$("submitBtn").classList.add("hidden");$("nextBtn").classList.remove("hidden");$("nextBtn").textContent=idx===questions.length-1?"Ver resultado →":"Siguiente →";
+}
+$("nextBtn").addEventListener("click",()=>{if(mode==="duel")turn=1-turn;idx++;showQuestion()});
+function rewardFor(s){if(s>=500)return"🌎 Leyenda mundial";if(s>=250)return"✈️ Viajero/a experto/a";if(s>=100)return"🧭 Explorador/a";return"¡Seguí jugando para desbloquear tu primer premio!"}
+function finishGame(){
+stopTimer();$("questionbox").classList.add("hidden");$("result").classList.remove("hidden");$("progressFill").style.width="100%";
+let total=mode==="duel"?score[0]+score[1]:score[0];let winner=mode==="duel"?(score[0]===score[1]?"¡Empate!":`Ganador/a: ${score[0]>score[1]?players[0]:players[1]} 🏆`):"";
+$("finalScore").textContent=mode==="duel"?`${score[0]} - ${score[1]}`:score[0]+" puntos";$("resultTitle").textContent=mode==="duel"?"¡Terminó el duelo!":"¡Partida terminada!";
+$("resultMedal").textContent=mode==="duel"?(score[0]===score[1]?"🤝":"🏆"):(score[0]>=250?"🌎":score[0]>=100?"🏅":"🎯");
+$("resultText").textContent=mode==="duel"?`${correct[0]} aciertos de ${players[0]} y ${correct[1]} de ${players[1]}.`:`Lograste ${correct[0]} aciertos de ${questions.length}. ${rewardFor(score[0])}`;
+$("winnerText").textContent=winner;
+let r=getRecords();if(mode==="solo"){r.push({name:players[0],score:score[0],correct:correct[0],date:new Date().toLocaleDateString("es-AR")});r.sort((a,b)=>b.score-a.score);saveRecords(r.slice(0,10));updateRecords()}else{for(let i=0;i<2;i++)r.push({name:players[i],score:score[i],correct:correct[i],date:new Date().toLocaleDateString("es-AR")});r.sort((a,b)=>b.score-a.score);saveRecords(r.slice(0,10));updateRecords()}
+if(mode==="solo"&&score[0]>=100)toast("¡Premio desbloqueado: "+rewardFor(score[0])+"!");
+}
+$("againBtn").addEventListener("click",startGame);$("homeBtn").addEventListener("click",()=>{stopTimer();$("game").classList.remove("active");$("setup").classList.remove("hidden");updateRecords()});
+updateRecords();
+</script>
+</body>
+</html>
