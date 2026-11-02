@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Adivina el País</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#101a3a,#176a83);font-family:Arial,sans-serif;color:#f5f7ff;min-height:100vh;padding:20px}
+main{max-width:850px;margin:auto}.panel{background:#151f40;border:1px solid #405080;border-radius:20px;padding:22px;margin:14px 0;box-shadow:0 12px 30px #0003}
+h1{margin:0;font-size:2rem}p{line-height:1.5;color:#d5def5}.stats{display:flex;gap:10px;flex-wrap:wrap}.stat{background:#0d1733;padding:12px 18px;border-radius:12px;flex:1;min-width:110px}button,select,input{font:inherit;border-radius:11px;padding:12px;border:1px solid #53638f}button{cursor:pointer;font-weight:bold;background:#55e6d0;color:#10203b;border:0;margin:5px 3px}button.alt{background:#30416c;color:white;border:1px solid #596b9b}button:disabled{opacity:.5}select,input{background:#0c1530;color:white;width:100%;margin:5px 0 12px}.answers{display:grid;grid-template-columns:1fr 1fr;gap:9px}.answers button{background:#26365f;color:white;border:1px solid #53638f;text-align:left}.answers button.chosen{outline:3px solid #55e6d0}.answers button.right{background:#146449}.answers button.wrong{background:#80374f}.hide{display:none}.tag{display:inline-block;background:#30416c;padding:7px 12px;border-radius:30px;margin:4px 4px 12px 0}.feedback{min-height:28px;font-weight:bold}.prize{color:#ffd166;font-weight:bold}@media(max-width:600px){.answers{grid-template-columns:1fr}body{padding:12px}}
+</style>
+<main>
+<section class="panel"><h1>🌎 Adivina el País</h1><p>Descubrí países con pistas, ganá puntos y desbloqueá premios. ¡También podés desafiar a otra persona!</p>
+<div id="setup"><label>Dificultad<select id="diff"><option value="easy">Fácil · sin reloj · 10 puntos</option><option value="medium">Media · 20 segundos · 20 puntos</option><option value="hard">Difícil · 10 segundos · 30 puntos</option></select></label>
+<label>Modo<select id="mode"><option value="solo">Individual</option><option value="duel">Duelo de 2 jugadores por turnos</option></select></label>
+<label>Jugador 1<input id="p1" value="Jugador 1" maxlength="20"></label><label id="p2label" class="hide">Jugador 2<input id="p2" value="Jugador 2" maxlength="20"></label>
+<label>Preguntas<select id="count"><option>10</option><option>15</option><option>20</option></select></label><button id="start">Empezar a jugar</button>
+</div>
+<div id="game" class="hide"><div class="stats"><div class="stat">⭐ Puntaje<strong id="score">0</strong></div><div class="stat">🎯 Aciertos<strong id="hits">0</strong></div><div class="stat">⏱ Tiempo<strong id="clock">—</strong></div></div>
+<p><span class="tag" id="number"></span><span class="tag" id="turn"></span><span class="tag" id="zone"></span></p><h2>¿Qué país soy?</h2><p id="clue"></p><div class="answers" id="answers"></div><p id="feedback" class="feedback"></p><button id="hint" class="alt">💡 Pedir pista (−5 puntos)</button><button id="send">Enviar respuesta</button><button id="next" class="hide">Siguiente →</button></div>
+<div id="result" class="hide"><h2>🏆 ¡Partida terminada!</h2><h1 id="final"></h1><p id="summary"></p><p class="prize" id="prize"></p><button id="again">Jugar otra vez</button><button class="alt" id="home">Volver al menú</button></div></section>
+<section class="panel"><h3>🏅 Récords de este dispositivo</h3><p id="records">Todavía no hay récords.</p><small>Los récords se guardan en este navegador. En el modo duelo, los jugadores se turnan en el mismo dispositivo.</small></section>
+</main>
+<script>
+const data=[
+["Brasil","América del Sur","Soy el país más grande de Sudamérica. En gran parte de mi territorio está la selva amazónica y mi idioma oficial es el portugués.","Mi bandera tiene un rombo amarillo."],
+["Egipto","África","En mi territorio están las pirámides de Guiza y el río Nilo. Mi capital es El Cairo.","Fui hogar de los faraones."],
+["Japón","Asia","Soy un archipiélago de Asia oriental. Mi capital es Tokio y el monte Fuji es uno de mis símbolos.","Me llaman la tierra del sol naciente."],
+["Canadá","América del Norte","Estoy al norte de Estados Unidos y mi bandera tiene una hoja de arce.","Mi capital es Ottawa."],
+["Australia","Oceanía","Soy un país y continente insular famoso por los canguros.","Mi capital es Canberra."],
+["Argentina","América del Sur","Mi capital es Buenos Aires y mi territorio llega hasta la Patagonia.","Mi selección ganó el Mundial de fútbol 2022."],
+["Italia","Europa","Mi territorio parece una bota y mi capital es Roma.","Soy famoso por la pizza y la pasta."],
+["India","Asia","En mi territorio está el Taj Mahal y mi capital es Nueva Delhi.","Mi bandera tiene una rueda azul."],
+["México","América del Norte","Estoy al sur de Estados Unidos. Mi capital es Ciudad de México.","Mi gastronomía incluye tacos."],
+["Kenia","África","Estoy en África oriental. Mi capital es Nairobi y tengo grandes reservas naturales.","En mis sabanas viven jirafas y leones."],
+["Francia","Europa","Mi capital es París y en mi territorio está la Torre Eiffel.","Mi bandera tiene azul, blanco y rojo."],
+["Perú","América del Sur","En mi territorio está Machu Picchu y mi capital es Lima.","Mi historia está ligada al Imperio inca."],
+["China","Asia","En mi territorio se encuentra la Gran Muralla y mi capital es Pekín.","Soy uno de los países más poblados del mundo."],
+["España","Europa","Mi capital es Madrid y estoy en la península ibérica.","En mi territorio está Andalucía."],
+["Marruecos","África","Estoy en el noroeste africano, cerca de España, y mi capital es Rabat.","Marrakech es una de mis ciudades conocidas."],
+["Nueva Zelanda","Oceanía","Soy un país formado principalmente por dos grandes islas del Pacífico.","Mis habitantes son conocidos como kiwis."],
+["Chile","América del Sur","Soy largo y angosto, entre los Andes y el océano Pacífico.","En mi norte está el desierto de Atacama."],
+["Grecia","Europa","Mi historia antigua está llena de mitos y mi capital es Atenas.","Atenas lleva el nombre de una diosa."],
+["Corea del Sur","Asia","Estoy en la península coreana y mi capital es Seúl.","Soy conocido por el K-pop."],
+["Sudáfrica","África","Estoy en el extremo sur africano y tengo tres capitales oficiales.","Ciudad del Cabo es una de ellas."]
+];
+let qs=[],i=0,pts=[0,0],hits=[0,0],turn=0,players=[],mode="solo",diff="easy",chosen="",locked=false,timer=null,left=0,usedHint=false;
+const $=x=>document.getElementById(x);const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+$("mode").onchange=()=>$("p2label").classList.toggle("hide",$("mode").value!=="duel");
+function stop(){if(timer)clearInterval(timer);timer=null}
+function records(){try{return JSON.parse(localStorage.getItem("adivinaRecords")||"[]")}catch(e){return []}}
+function showRecords(){let r=records();$("records").innerHTML=r.length?r.slice(0,5).map(x=>`${x.name}: <b>${x.points} puntos</b>`).join("<br>"):"Todavía no hay récords."}
+function start(){stop();mode=$("mode").value;diff=$("diff").value;players=[$("p1").value||"Jugador 1",$("p2").value||"Jugador 2"];if(mode==="solo")players[1]=players[0];pts=[0,0];hits=[0,0];turn=0;i=0;qs=shuffle(data).slice(0,+$("count").value);$("setup").classList.add("hide");$("result").classList.add("hide");$("game").classList.remove("hide");draw()}
+function draw(){stop();locked=false;chosen="";usedHint=false;let q=qs[i];$("number").textContent=`Pregunta ${i+1}/${qs.length}`;$("turn").textContent=mode==="duel"?"Turno: "+players[turn]:players[0];$("zone").textContent=q[1];$("score").textContent=pts[0]+(mode==="duel"?" / "+pts[1]:"");$("hits").textContent=hits[0]+(mode==="duel"?" / "+hits[1]:"");$("clue").textContent=q[2];$("feedback").textContent="Elegí una opción y luego enviá tu respuesta.";let opts=shuffle([q[0],...shuffle(data.filter(x=>x[0]!==q[0]).map(x=>x[0])).slice(0,3)]);$("answers").innerHTML=opts.map(x=>`<button data-v="${x}">${x}</button>`).join("");document.querySelectorAll("#answers button").forEach(b=>b.onclick=()=>{if(locked)return;chosen=b.dataset.v;document.querySelectorAll("#answers button").forEach(x=>x.classList.toggle("chosen",x===b))});$("send").classList.remove("hide");$("next").classList.add("hide");$("hint").disabled=false;
+if(diff==="easy"){$("clock").textContent="Sin límite"}else{left=diff==="medium"?20:10;$("clock").textContent=left+" s";timer=setInterval(()=>{left--;$("clock").textContent=left+" s";if(left<=0){stop();check("")}},1000)}}
+$("hint").onclick=()=>{if(locked||usedHint)return;usedHint=true;pts[turn]=Math.max(0,pts[turn]-5);$("clue").textContent=qs[i][2]+" Pista: "+qs[i][3];$("score").textContent=pts[0]+(mode==="duel"?" / "+pts[1]:"");$("hint").disabled=true};
+function check(v){if(locked)return;if(!v){$("feedback").textContent="Elegí una respuesta primero.";return}locked=true;stop();let q=qs[i],ok=v===q[0];if(ok){pts[turn]+=diff==="easy"?10:diff==="medium"?20:30;hits[turn]++;$("feedback").textContent="¡Correcto! +"+(diff==="easy"?10:diff==="medium"?20:30)+" puntos."}else $("feedback").textContent=v?"No era esa. La respuesta correcta es "+q[0]+".":"¡Se acabó el tiempo! Era "+q[0]+".";document.querySelectorAll("#answers button").forEach(b=>{b.disabled=true;if(b.dataset.v===q[0])b.classList.add("right");else if(b.dataset.v===v)b.classList.add("wrong")});$("score").textContent=pts[0]+(mode==="duel"?" / "+pts[1]:"");$("hits").textContent=hits[0]+(mode==="duel"?" / "+hits[1]:"");$("send").classList.add("hide");$("next").classList.remove("hide")}
+$("send").onclick=()=>{if(!chosen){$("feedback").textContent="Elegí una respuesta antes de enviar.";return}check(chosen)};
+$("next").onclick=()=>{if(mode==="duel")turn=1-turn;i++;if(i<qs.length)draw();else finish()};
+function finish(){stop();$("game").classList.add("hide");$("result").classList.remove("hide");if(mode==="solo"){let n=pts[0],award=n>=500?"🌎 Premio: Leyenda mundial":n>=250?"✈️ Premio: Viajero experto":n>=100?"🧭 Premio: Explorador":"¡Seguí jugando para desbloquear premios!";$("final").textContent=n+" puntos";$("summary").textContent=hits[0]+" de "+qs.length+" respuestas correctas."; $("prize").textContent=award;let r=records();r.push({name:players[0],points:n});r.sort((a,b)=>b.points-a.points);localStorage.setItem("adivinaRecords",JSON.stringify(r.slice(0,5)))}else{$("final").textContent=pts[0]+" - "+pts[1];$("summary").textContent=players[0]+": "+hits[0]+" aciertos · "+players[1]+": "+hits[1]+" aciertos."; $("prize").textContent=pts[0]===pts[1]?"¡Empate!":"Ganador: "+(pts[0]>pts[1]?players[0]:players[1])}showRecords()}
+$("start").onclick=start;$("again").onclick=start;$("home").onclick=()=>{$("result").classList.add("hide");$("setup").classList.remove("hide")};showRecords();
+</script></main></html>
